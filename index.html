@@ -142,9 +142,47 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
 .team-member .rarity-badge{font-size:11px;padding:3px 5px}
 .team-slot-number{position:absolute;left:5px;top:5px;z-index:5;padding:2px 6px;border-radius:999px;background:rgba(22,22,19,.78);color:#e4dccf;font-size:10px;font-weight:800;pointer-events:none}
 
-@media(max-width:1320px){.team-workspace{grid-template-columns:190px minmax(0,1fr) 190px}.team-pool{grid-template-columns:1fr}.team-board{grid-template-columns:1fr}.team-card{width:100%}.team-slots{grid-template-columns:repeat(4,minmax(0,1fr))}.team-slot{width:auto;height:184px}}
-@media(max-width:900px){.page-tabs{position:static}.teams-head{align-items:flex-start;flex-direction:column}.teams-head-actions{width:100%}.team-workspace{grid-template-columns:1fr}.team-palette{position:static;max-height:none}.team-palette-owned{order:1}.team-board{order:2;grid-template-columns:1fr}.team-palette-support{order:3}.team-pool{grid-template-columns:repeat(3,minmax(0,1fr))}.team-card{width:100%}.team-slots{grid-template-columns:repeat(4,minmax(0,1fr))}.team-slot{width:auto}}
-@media(max-width:480px){.team-pool{grid-template-columns:repeat(2,minmax(0,1fr))}.team-slots{grid-template-columns:repeat(2,minmax(0,1fr))}.team-slot{width:auto;height:182px}.team-member-img{height:108px}}
+/* v82: 小さいPC画面では編成候補カードを拡大せず、一覧性を優先する */
+@media(max-width:1320px){
+  .team-workspace{grid-template-columns:190px minmax(0,1fr) 190px}
+  .team-pool{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+  .team-pool-img{height:82px}
+  .team-pool-body{padding:5px 5px 6px}
+  .team-pool-name{font-size:13px}
+  .team-pool-resonance{font-size:11px;margin-top:2px}
+  .team-pool-card .tags{margin-top:3px;gap:2px}
+  .team-pool-card .tag,.team-pool-card .role-tag{font-size:8px;padding:2px 3px}
+  .team-pool-card .afflatus-icon{width:20px;height:28px}
+  .team-pool-card .badge.portray{font-size:11px;padding:2px 4px}
+  .team-pool-card .badge.reverie-mini{font-size:8px;padding:2px 3px}
+  .team-pool-card .rarity-badge{font-size:9px;padding:2px 4px}
+  .team-board{grid-template-columns:1fr}
+  .team-card{width:100%}
+  .team-slots{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .team-slot{width:auto;height:184px}
+}
+@media(max-width:900px){
+  .page-tabs{position:static}
+  .teams-head{align-items:flex-start;flex-direction:column}
+  .teams-head-actions{width:100%}
+  .team-workspace{grid-template-columns:1fr}
+  .team-palette{position:static;max-height:none}
+  .team-palette-owned{order:1}
+  .team-board{order:2;grid-template-columns:1fr}
+  .team-palette-support{order:3}
+  .team-pool{grid-template-columns:repeat(auto-fill,minmax(88px,105px));gap:6px;justify-content:start}
+  .team-pool-img{height:80px}
+  .team-card{width:100%}
+  .team-slots{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .team-slot{width:auto}
+}
+@media(max-width:480px){
+  .team-pool{grid-template-columns:repeat(auto-fill,minmax(82px,100px));gap:5px;justify-content:start}
+  .team-pool-img{height:74px}
+  .team-slots{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .team-slot{width:auto;height:182px}
+  .team-member-img{height:108px}
+}
 
 
 /* v64: 迷思の海用レンタル枠（狂想済み） */
