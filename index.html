@@ -989,7 +989,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
 
   function avatarUrl(ch, cs = getCharState(ch.id)) {
     if (ch?.avatarData) return ch.avatarData;
-    return `${AVATAR_BASE}${encodeURIComponent(getVariantId(ch, cs))}.png`;
+    return `${AVATAR_BASE}${encodeURIComponent(getVariantId(ch, cs))}.webp`;
   }
 
   async function loadCharacters() {
