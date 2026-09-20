@@ -91,7 +91,7 @@ test('Ver3.9・Ver4.0の追加キャラを指定名と分類で返す', async ()
 
   const expectations = [
     ['ナルキッソス', 6, ['Beast'], 'アルティメット', 'ヒーラー'],
-    ['SPリーリャ', 6, ['Star'], '追加行動', 'アタッカー'],
+    ['SPリーリャ', 6, ['Star'], '星洞知', 'アタッカー'],
     ['ドレイク', 6, ['Beast'], '残光', 'サポーター'],
     ['グリンドル', 4, ['Beast'], null, 'サポーター']
   ];
@@ -118,6 +118,16 @@ test('Ver4.0で実装決定した37とベリルを狂想対象として返す', 
   }
 });
 
+test('SPリーリャと37を星洞知として返す', async () => {
+  const api = await loadAppApi();
+  const characters = api.mergeLocalExtraCharacters(upstreamFixture);
+  for (const englishName of ['Huntsworn Lilya', '37']) {
+    const character = characters.find(item => item.names?.['en-US'] === englishName);
+    assert.ok(character, `${englishName}をテストデータから取得する`);
+    assert.equal(api.getAutoTags(character)[0], '星洞知', `${englishName}を星洞知に分類する`);
+  }
+});
+
 test('Ver4.0追加キャラのローカル画像が存在する', async () => {
   const api = await loadAppApi();
   const characters = api.mergeLocalExtraCharacters(upstreamFixture);
@@ -127,5 +137,19 @@ test('Ver4.0追加キャラのローカル画像が存在する', async () => {
     const imagePath = api.avatarUrl(character);
     assert.match(imagePath, /^assets\/characters\/.+\.png$/, `${englishName}はローカル画像を使う`);
     await access(path.join(repoRoot, imagePath));
+  }
+});
+
+test('SPリーリャとドレイクの画像は縦長の立ち絵である', async () => {
+  const api = await loadAppApi();
+  const characters = api.mergeLocalExtraCharacters(upstreamFixture);
+  for (const englishName of ['Huntsworn Lilya', 'Drake']) {
+    const character = characters.find(item => item.names?.['en-US'] === englishName);
+    const imagePath = path.join(repoRoot, api.avatarUrl(character));
+    const image = await readFile(imagePath);
+    assert.equal(image.toString('ascii', 1, 4), 'PNG', `${englishName}はPNG画像を使う`);
+    const width = image.readUInt32BE(16);
+    const height = image.readUInt32BE(20);
+    assert.ok(height > width, `${englishName}は縦長画像にする（${width}x${height}）`);
   }
 });
