@@ -128,28 +128,21 @@ test('SPリーリャと37を星洞知として返す', async () => {
   }
 });
 
-test('Ver4.0追加キャラのローカル画像が存在する', async () => {
+test('Ver4.0追加キャラはカード用に切り出したローカルPNGを使う', async () => {
   const api = await loadAppApi();
   const characters = api.mergeLocalExtraCharacters(upstreamFixture);
-  for (const englishName of ['Huntsworn Lilya', 'Drake', 'Grindylow']) {
+  for (const englishName of ['Huntsworn Lilya', 'Drake', 'Grindylow', 'Hedone']) {
     const character = characters.find(item => item.names?.['en-US'] === englishName);
     assert.ok(character, `${englishName}を追加する`);
     const imagePath = api.avatarUrl(character);
     assert.match(imagePath, /^assets\/characters\/.+\.png$/, `${englishName}はローカル画像を使う`);
     await access(path.join(repoRoot, imagePath));
-  }
-});
-
-test('SPリーリャとドレイクの画像は縦長の立ち絵である', async () => {
-  const api = await loadAppApi();
-  const characters = api.mergeLocalExtraCharacters(upstreamFixture);
-  for (const englishName of ['Huntsworn Lilya', 'Drake']) {
-    const character = characters.find(item => item.names?.['en-US'] === englishName);
-    const imagePath = path.join(repoRoot, api.avatarUrl(character));
-    const image = await readFile(imagePath);
+    const image = await readFile(path.join(repoRoot, imagePath));
     assert.equal(image.toString('ascii', 1, 4), 'PNG', `${englishName}はPNG画像を使う`);
+    assert.equal(image.readUInt8(25), 2, `${englishName}は透明部分のない黒背景PNGを使う`);
     const width = image.readUInt32BE(16);
     const height = image.readUInt32BE(20);
-    assert.ok(height > width, `${englishName}は縦長画像にする（${width}x${height}）`);
+    const ratio = width / height;
+    assert.ok(ratio >= 1.1 && ratio <= 1.3, `${englishName}は顔アップ用のカード比率にする（${width}x${height}）`);
   }
 });
