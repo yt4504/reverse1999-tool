@@ -243,13 +243,19 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
 .teams-page.free-mode .team-slot:has(.team-member:not(.support)){border-color:#d6b865;background:#343229}
 @media(max-width:900px){.teams-page.free-mode .team-workspace{grid-template-columns:1fr}}
 
-/* FREE編成: PCの余白を候補一覧に使い、編成ボードの幅は維持する。 */
+/* 編成作成: PCの余白を左の候補一覧に使い、編成ボードとレンタル一覧の幅は維持する。 */
 @media(min-width:1715px){
+  #app:has(.teams-page:not(.free-mode):not(.hidden)){width:min(1685px,calc(100% - 20px))}
+  .teams-page:not(.free-mode) .team-workspace{grid-template-columns:325px minmax(0,1fr) 220px}
+  .teams-page:not(.free-mode) #teamPool{grid-template-columns:repeat(3,minmax(0,1fr))}
   #app:has(.teams-page.free-mode:not(.hidden)){width:min(1695px,calc(100% - 20px))}
   .teams-page.free-mode .team-workspace{grid-template-columns:365px minmax(0,1fr)}
   .teams-page.free-mode #teamPool{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(min-width:1830px){
+  #app:has(.teams-page:not(.free-mode):not(.hidden)){width:min(1790px,calc(100% - 20px))}
+  .teams-page:not(.free-mode) .team-workspace{grid-template-columns:430px minmax(0,1fr) 220px}
+  .teams-page:not(.free-mode) #teamPool{grid-template-columns:repeat(4,minmax(0,1fr))}
   #app:has(.teams-page.free-mode:not(.hidden)){width:min(1810px,calc(100% - 20px))}
   .teams-page.free-mode .team-workspace{grid-template-columns:480px minmax(0,1fr)}
   .teams-page.free-mode #teamPool{grid-template-columns:repeat(4,minmax(0,1fr))}
