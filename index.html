@@ -234,6 +234,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
 .free-page-tab{border-color:#887541}
 .free-page-tab.active{background:#f0d47f;border-color:#f0d47f;color:#211c12}
 .teams-page.free-mode .team-workspace{grid-template-columns:250px minmax(0,1fr)}
+.teams-page.free-support-mode .team-workspace{grid-template-columns:250px minmax(0,1fr) 250px}
 .teams-page.free-mode .team-palette-owned{border-color:#887541;background:linear-gradient(180deg,rgba(62,56,39,.97),rgba(45,45,41,.96))}
 .teams-page.free-mode .team-palette-owned .team-palette-head strong{color:#ffe7a2}
 .team-pool-card.free{border-color:#d6b865;background:#38352a;box-shadow:0 0 0 1px rgba(214,184,101,.16),0 5px 14px rgba(0,0,0,.16)}
@@ -298,6 +299,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
       <button id="boxPageTab" class="page-tab active" type="button">スーツケース一覧</button>
       <button id="teamsPageTab" class="page-tab" type="button">編成作成</button>
       <button id="freeTeamsPageTab" class="page-tab free-page-tab" type="button">編成作成(FREE)</button>
+      <button id="freeSupportPageTab" class="page-tab free-page-tab" type="button">編成作成(FREE＋レンタル)</button>
     </nav>
 
     <div id="boxPage">
@@ -480,7 +482,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
     'Spathodea', 'Willow', 'Tuesday', 'Liang Yue',
     'Argus', 'Mercuria', 'Vila', 'Marcus', 'Recoleta', 'Lopera',
     'Svishti', 'Svisti', 'Suvishti',
-    '37', 'Beryl'
+    '37', 'Beryl', 'J'
   ];
 
   const AUTO_TAGS_RAW = {
@@ -852,7 +854,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
   let characters = [];
   let state = loadState();
   let editingId = null;
-  let activeTeamMode = 'owned'; // owned: 通常編成 / free: 全キャラ自由編成
+  let activeTeamMode = 'owned'; // owned: 通常編成 / free: 全キャラ / free-support: 全キャラ＋狂想レンタル
   const savedUiFilters = state.uiFilters && typeof state.uiFilters === 'object' ? state.uiFilters : {};
   const validRarities = [6,5,4,3,2];
   const validAfflatus = Object.keys(AFFLATUS);
@@ -889,10 +891,11 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
         characters: parsed.characters && typeof parsed.characters === 'object' ? parsed.characters : {},
         teams: Array.isArray(parsed.teams) ? parsed.teams.map(normalizeTeam).filter(Boolean) : [],
         freeTeams: Array.isArray(parsed.freeTeams) ? parsed.freeTeams.map(normalizeTeam).filter(Boolean) : [],
+        freeSupportTeams: Array.isArray(parsed.freeSupportTeams) ? parsed.freeSupportTeams.map(normalizeTeam).filter(Boolean) : [],
         uiFilters: parsed.uiFilters && typeof parsed.uiFilters === 'object' ? parsed.uiFilters : {},
       };
     } catch {
-      return { version: VERSION, userId: '', autoTagVersion: 0, characters: {}, teams: [], freeTeams: [], uiFilters: {} };
+      return { version: VERSION, userId: '', autoTagVersion: 0, characters: {}, teams: [], freeTeams: [], freeSupportTeams: [], uiFilters: {} };
     }
   }
 
@@ -949,7 +952,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
   }
 
   function activeTeams() {
-    return activeTeamMode === 'free' ? state.freeTeams : state.teams;
+    return activeTeamMode === 'free-support' ? state.freeSupportTeams : (activeTeamMode === 'free' ? state.freeTeams : state.teams);
   }
 
   function makeTeam(name = '') {
@@ -965,6 +968,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
   function ensureTeamState() {
     if (!Array.isArray(state.teams)) state.teams = [];
     if (!Array.isArray(state.freeTeams)) state.freeTeams = [];
+    if (!Array.isArray(state.freeSupportTeams)) state.freeSupportTeams = [];
   }
 
   function getAutoTags(ch) {
@@ -1167,7 +1171,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
       search: $('search'), ownershipButtons: $('ownershipButtons'), viewButtons: $('viewButtons'), reverieButtons: $('reverieButtons'),
       rarityFilters: $('rarityFilters'), afflatusFilters: $('afflatusFilters'), exportPng: $('exportPng'), exportData: $('exportData'), importData: $('importData'), importDataFile: $('importDataFile'), clearFilters: $('clearFilters'), resetAll: $('resetAll'),
       status: $('status'), grid: $('grid'), toast: $('toast'),
-      boxPageTab: $('boxPageTab'), teamsPageTab: $('teamsPageTab'), freeTeamsPageTab: $('freeTeamsPageTab'), boxPage: $('boxPage'), teamsPage: $('teamsPage'),
+      boxPageTab: $('boxPageTab'), teamsPageTab: $('teamsPageTab'), freeTeamsPageTab: $('freeTeamsPageTab'), freeSupportPageTab: $('freeSupportPageTab'), boxPage: $('boxPage'), teamsPage: $('teamsPage'),
       teamsPageTitle: $('teamsPageTitle'), teamsPageDescription: $('teamsPageDescription'), teamPaletteTitle: $('teamPaletteTitle'), teamSupportAside: $('teamSupportAside'),
       addTeamBtn: $('addTeamBtn'), exportTeamsPng: $('exportTeamsPng'), teamSearch: $('teamSearch'), teamPool: $('teamPool'), teamSupportPool: $('teamSupportPool'), teamBoard: $('teamBoard'), teamOwnedCount: $('teamOwnedCount'), teamSupportCount: $('teamSupportCount'), mythPalette: $('mythPalette'),
       freeRarityFilterWrap: $('freeRarityFilterWrap'), freeRarityFilters: $('freeRarityFilters')
@@ -1192,7 +1196,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
           freeRarities.has(r) ? freeRarities.delete(r) : freeRarities.add(r);
           syncFreeRarityButtons();
           saveUiFilters();
-          if (activeTeamMode === 'free') renderTeamPalette();
+          if (activeTeamMode !== 'owned') renderTeamPalette();
         });
         els.freeRarityFilters.append(b);
       });
@@ -1217,6 +1221,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
     els.boxPageTab.addEventListener('click', () => switchPage('box'));
     els.teamsPageTab.addEventListener('click', () => switchPage('teams'));
     els.freeTeamsPageTab.addEventListener('click', () => switchPage('free'));
+    els.freeSupportPageTab.addEventListener('click', () => switchPage('free-support'));
     els.addTeamBtn.addEventListener('click', addTeam);
     els.exportTeamsPng.addEventListener('click', exportTeamsPng);
     els.teamSearch.addEventListener('input', renderTeamPalette);
@@ -1444,14 +1449,16 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
 
   function switchPage(page) {
     const isBox = page === 'box';
-    const isFree = page === 'free';
-    if (!isBox) activeTeamMode = isFree ? 'free' : 'owned';
+    const isFree = page === 'free' || page === 'free-support';
+    const hasFreeSupport = page === 'free-support';
+    if (!isBox) activeTeamMode = hasFreeSupport ? 'free-support' : (isFree ? 'free' : 'owned');
 
     els.boxPage.classList.toggle('hidden', !isBox);
     els.teamsPage.classList.toggle('hidden', isBox);
     els.boxPageTab.classList.toggle('active', isBox);
     els.teamsPageTab.classList.toggle('active', !isBox && !isFree);
-    els.freeTeamsPageTab.classList.toggle('active', !isBox && isFree);
+    els.freeTeamsPageTab.classList.toggle('active', !isBox && page === 'free');
+    els.freeSupportPageTab.classList.toggle('active', !isBox && hasFreeSupport);
 
     if (!isBox) {
       ensureTeamState();
@@ -1466,15 +1473,17 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
   }
 
   function applyTeamModeUi() {
-    const free = activeTeamMode === 'free';
+    const free = activeTeamMode !== 'owned';
+    const freeSupport = activeTeamMode === 'free-support';
     els.teamsPage?.classList.toggle('free-mode', free);
-    if (els.teamsPageTitle) els.teamsPageTitle.textContent = free ? '編成作成(FREE)' : '編成作成';
+    els.teamsPage?.classList.toggle('free-support-mode', freeSupport);
+    if (els.teamsPageTitle) els.teamsPageTitle.textContent = freeSupport ? '編成作成(FREE＋レンタル)' : (free ? '編成作成(FREE)' : '編成作成');
     if (els.teamsPageDescription) els.teamsPageDescription.textContent = free
       ? '所持状態に関係なく、全キャラから自由に編成できます。相談用の編成画像作成に使えます。'
       : '左の所持キャラをドラッグして、好きな編成の4枠へ入れてください。';
     if (els.teamPaletteTitle) els.teamPaletteTitle.textContent = free ? '全キャラ' : '所持キャラ';
     if (els.teamSearch) els.teamSearch.placeholder = free ? '全キャラから検索' : '編成用キャラを検索';
-    if (els.teamSupportAside) els.teamSupportAside.classList.toggle('hidden', free);
+    if (els.teamSupportAside) els.teamSupportAside.classList.toggle('hidden', free && !freeSupport);
     if (els.freeRarityFilterWrap) els.freeRarityFilterWrap.classList.toggle('hidden', !free);
     if (free) syncFreeRarityButtons();
   }
@@ -1484,7 +1493,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
     activeTeams().push(makeTeam());
     saveState();
     renderTeamBoard();
-    toast(activeTeamMode === 'free' ? 'FREE編成を追加しました' : '編成を追加しました');
+    toast(activeTeamMode !== 'owned' ? 'FREE編成を追加しました' : '編成を追加しました');
   }
 
   function findCharacterById(id) {
@@ -1619,9 +1628,10 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
 
   function renderTeamPalette() {
     if (!els.teamPool) return;
-    const free = activeTeamMode === 'free';
+    const free = activeTeamMode !== 'owned';
+    const showSupport = activeTeamMode !== 'free';
     const mainList = free ? allTeamCharacters() : ownedTeamCharacters();
-    const supportList = free ? [] : supportTeamCharacters();
+    const supportList = showSupport ? supportTeamCharacters() : [];
     const total = free ? characters.length : characters.filter(ch => getCharState(ch.id).owned).length;
     els.teamOwnedCount.textContent = `${mainList.length}/${total}人`;
     if (els.teamSupportCount) els.teamSupportCount.textContent = `${supportList.length}人`;
@@ -1634,7 +1644,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
       els.teamPool.replaceChildren(frag);
     }
 
-    if (!free && els.teamSupportPool) {
+    if (showSupport && els.teamSupportPool) {
       if (!supportList.length) {
         els.teamSupportPool.innerHTML = '<div class="team-pool-empty support-empty">狂想済みキャラが見つかりません。</div>';
       } else {
@@ -1851,7 +1861,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
       const member = document.createElement('div');
       member.className = `team-member${slotData.support ? ' support' : ''}`;
       member.draggable = true;
-      const free = activeTeamMode === 'free';
+      const free = activeTeamMode !== 'owned';
       const topRight = slotData.support
         ? '<div class="team-member-top-right"><div class="card-top-stack"><span class="badge reverie-mini">狂想</span></div></div>'
         : free
@@ -1983,7 +1993,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
 
       ctx.fillStyle = '#f1ecdf';
       ctx.font = '700 34px "Meiryo", "Yu Gothic UI", serif';
-      ctx.fillText(activeTeamMode === 'free' ? 'リバース:1999 編成(FREE)' : 'リバース:1999 編成', margin, 48);
+      ctx.fillText(activeTeamMode === 'free-support' ? 'リバース:1999 編成(FREE＋レンタル)' : (activeTeamMode === 'free' ? 'リバース:1999 編成(FREE)' : 'リバース:1999 編成'), margin, 48);
       ctx.fillStyle = '#625f54';
       ctx.fillRect(margin, 64, width - margin * 2, 1);
 
@@ -2058,7 +2068,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
           const ch = slotData.charId ? findCharacterById(slotData.charId) : null;
           if (ch) {
             const cs = getCharState(ch.id);
-            drawExportCard(ctx, x, y, cardW, cardH, ch, cs, imageMap.get(String(ch.id)), affIconMap, { support:slotData.support, free:activeTeamMode === 'free' });
+            drawExportCard(ctx, x, y, cardW, cardH, ch, cs, imageMap.get(String(ch.id)), affIconMap, { support:slotData.support, free:activeTeamMode !== 'owned' });
           } else {
             drawExportEmptyTeamSlot(ctx, x, y, cardW, cardH, i + 1);
           }
@@ -2067,8 +2077,8 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
 
       const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
       if (!blob) throw new Error('PNG生成に失敗しました');
-      downloadBlob(blob, datedName(activeTeamMode === 'free' ? 'reverse-1999-teams-free' : 'reverse-1999-teams', '.png'));
-      toast(activeTeamMode === 'free' ? 'FREE編成PNGを保存しました' : '編成PNGを保存しました');
+      downloadBlob(blob, datedName(activeTeamMode === 'free-support' ? 'reverse-1999-teams-free-support' : (activeTeamMode === 'free' ? 'reverse-1999-teams-free' : 'reverse-1999-teams'), '.png'));
+      toast(activeTeamMode !== 'owned' ? 'FREE編成PNGを保存しました' : '編成PNGを保存しました');
     } catch (err) {
       console.error(err);
       alert(`編成PNGを書き出せませんでした。\n${err.message}\n\nこのエラーが続く場合は、画面をそのまま送ってください。`);
@@ -2154,7 +2164,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
 
   function resetAll() {
     if (!confirm('スーツケースに保存した所持・塑造・共鳴・編成情報をすべて削除しますか？\nこの操作は元に戻せません。')) return;
-    stickyUnownedInOwnedView.clear(); state = { version:VERSION, userId:'', autoTagVersion:0, characters:{}, teams:[], freeTeams:[], uiFilters:{} }; saveState(); ensureAutoTags(); render(); toast('保存データを初期化しました');
+    stickyUnownedInOwnedView.clear(); state = { version:VERSION, userId:'', autoTagVersion:0, characters:{}, teams:[], freeTeams:[], freeSupportTeams:[], uiFilters:{} }; saveState(); ensureAutoTags(); render(); toast('保存データを初期化しました');
   }
 
   function getOwnedRowsFromList(baseList) {
