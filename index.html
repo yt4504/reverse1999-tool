@@ -262,6 +262,24 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
   .teams-page.free-mode #teamPool{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 
+/* FREE＋レンタルは横幅の広いPCでも3列を維持する。FREE共通の2列指定より後で上書き。 */
+@media(min-width:901px){
+  .teams-page.free-mode.free-support-mode .team-workspace{
+    grid-template-columns:clamp(250px,25vw,430px) minmax(0,1fr) 220px;
+    align-items:start;
+  }
+  .teams-page.free-mode.free-support-mode #teamPool{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+@media(min-width:1830px){
+  .teams-page.free-mode.free-support-mode .team-workspace{
+    grid-template-columns:430px minmax(0,1fr) 220px;
+  }
+  .teams-page.free-mode.free-support-mode #teamPool{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+}
 /* v60: FREE編成 レア度フィルター */
 .free-rarity-filter-wrap{display:grid;gap:5px;margin:0 0 8px;padding:6px 7px;border:1px solid #74663d;border-radius:9px;background:#302d24}
 .free-rarity-label{font-size:11px;font-weight:900;color:#e8d49a}
