@@ -514,7 +514,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
     'Spathodea', 'Willow', 'Tuesday', 'Liang Yue',
     'Argus', 'Mercuria', 'Vila', 'Marcus', 'Recoleta', 'Lopera',
     'Svishti', 'Svisti', 'Suvishti',
-    '37', 'Beryl', 'J', 'Nautika', 'Moldir', 'Filinsto', 'Filimsto'
+    '37', 'Beryl', 'J', 'Nautika', 'Moldir', 'Filinsto', 'Filimsto', 'Filinshiduo', 'Felinshiduo', 'Windsong'
   ];
 
   const AUTO_TAGS_RAW = {
@@ -540,7 +540,7 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
     'Paper Heron': '木啓示', 'Tooth Fairy': '木啓示', 'An-an Lee': '木啓示', 'Bkornblume': '木啓示', 'Getian': '木啓示', 'Kiperina': '木啓示',
 
     // 星洞知 / Star Insight
-    '37': '星洞知', 'Huntsworn Lilya': '星洞知',
+    '37': '星洞知', 'Huntsworn Lilya': '星洞知', 'Perchta': '星洞知',
 
     // 反撃 / Riposte・Counter
     'Cornerstone': '反撃', 'J': '反撃', 'Ms. NewBabel': '反撃', 'Mr. Duncan': '反撃',
@@ -571,6 +571,8 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
   // ★2〜★6の役割タグ。編成相談で一目で役割が分かるよう、主用途を3分類する。
   // アタッカー＝主に火力を担当 / サポーター＝強化・弱体・補助 / ヒーラー＝回復・シールド・耐久維持。
   const ROLE_TAGS_RAW = {
+    'Perchta': 'ヒーラー',
+    'Evelyn': 'アタッカー',
     'Hedone': 'サポーター',
     'Narcissus': 'ヒーラー',
     'Huntsworn Lilya': 'アタッカー',
@@ -776,11 +778,41 @@ input,select{background:#292925;color:var(--text);border:1px solid #626058;borde
     [normalizeName('Huntsworn Lilya')]: 'SPリーリャ',
     [normalizeName('Drake')]: 'ドレイク',
     [normalizeName('Grindylow')]: 'グリンドル',
+    [normalizeName('Perchta')]: 'ペシュタ',
+    [normalizeName('Evelyn')]: 'イヴリン',
   };
 
   // 3.9以降の先行キャラ：元データ側へ未収録の間だけローカル補完する。
   // 今後追加するキャラ画像も、縦長の立ち絵を黒背景に配置して統一する。
   const LOCAL_EXTRA_CHARACTERS = [
+    {
+      id: 'future-perchta',
+      name: '佩施塔',
+      baseId: 4101,
+      releaseOrder: -10,
+      enabled: true,
+      names: { 'zh-CN':'佩施塔', 'zh-TW':'佩施塔', 'en-US':'Perchta', 'ja-JP':'ペシュタ' },
+      skins: [{ variantId:'future-perchta', type:'default', skinName:null, skinNameEng:null }],
+      defaultVariant:'future-perchta',
+      avatarPosition:{x:50,y:50},
+      stage:'preview',
+      rarity:6,
+      isReleased:false,
+    },
+    {
+      id: 'future-evelyn',
+      name: '伊芙琳',
+      baseId: 4102,
+      releaseOrder: -9,
+      enabled: true,
+      names: { 'zh-CN':'伊芙琳', 'zh-TW':'伊芙琳', 'en-US':'Evelyn', 'ja-JP':'イヴリン' },
+      skins: [{ variantId:'future-evelyn', type:'default', skinName:null, skinNameEng:null }],
+      defaultVariant:'future-evelyn',
+      avatarPosition:{x:50,y:50},
+      stage:'preview',
+      rarity:6,
+      isReleased:false,
+    },
     {
       id: '315701',
       name: '纳西索斯',
